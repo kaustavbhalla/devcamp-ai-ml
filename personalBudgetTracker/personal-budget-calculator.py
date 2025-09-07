@@ -2,81 +2,72 @@ import shutil
 import re
 import csv
 
+#Defining main function where maximum function take place :)
 def main():
     print("Welcome to Personal Budget Calculator!".center(shutil.get_terminal_size().columns))
-    print("To get started, complete the fields below: ".center(shutil.get_terminal_size().columns))
 
-    name = input("Enter your name to get started: ")
-    print(f"Hello {name}, let's get you started on your expense tracking journey!")
+    name = input("name: ")
+    print(f"Hello {name}")
     
     income, expenses = take_input()
-    remainingMoney = calcRemMoney(income,expenses)
+    remainingMoney = saving(income,expenses)
 
     print(f"Your income: {income}\nYour expenses: {expenses}\nYour savings: {remainingMoney}")
 
     if remainingMoney < 0:
-        print("Damn! You're in debt! You must decrease your expenses by filtering out all your unwanted purchases and being more responsible with money")
+        print("You're in debt! You must decrease your expenses by filtering out all your unwanted purchases and being more responsible with money")
     elif remainingMoney <= 0.25 * income:
-        print(f"Good! You saved about {((remainingMoney/income)*100):.2f}% of your income, which falls within the 25 percent band of savings. Its good, but could be better!")
+        print(f"You saved about {((remainingMoney/income)*100):.2f}% of your income, which falls within the 0-25 percent band of savings. Its good, but could be better!")
     elif remainingMoney <= 0.5 * income:
-        print(f"Amazing! You saved {((remainingMoney/income) * 100):.2f}% of your income, which falls within the 25-50% category of savings!")
+        print(f"You saved {((remainingMoney/income) * 100):.2f}% of your income, which falls within the 25-50% category of savings!")
     else:
-        print(f"Outstanding! You saved {((remainingMoney/income) * 100):.2f}% of your income, you're the GOAT!")
+        print(f"You saved {((remainingMoney/income) * 100):.2f}% of your income, great!")
 
-    with open("BudgetTracker.csv",'a') as budgetFile:
-        cs = csv.writer(budgetFile)
-        cs.writerow(["Name","Income","Expenses","Savings","Percent"])
     
     with open("BudgetTracker.csv",'a') as budgetFileoriginal:
         csvWriter = csv.writer(budgetFileoriginal)
         csvWriter.writerow([name,income,expenses,remainingMoney,(remainingMoney/income)*100])
 
+
+#taking specific input and replacing words like k or l with their specific multipliers :)
+
 def take_input():
-    split_income_val = []
-    split_expenses_val = []
     income = input("Enter your income in Rs.: ")
     expenses = input("Enter your expenses in Rs.: ")
-    cr = "cr"
+    incomeCheckVal = income.replace(" ","").lower()
+    expensesCheckVal = expenses.replace(" ","").lower()
 
-    if "," in income.replace(" ",""):
-        split_income_val = income.split(",")
-        income_substring = ""
-        for i in split_income_val:
-            income_substring += i
+    if "," in incomeCheckVal:
+        income = int(income.replace(",", ""))
+            
 
-        income = int(income_substring)
-
-    elif "k" in income.replace(" ","").lower():
+    elif "k" in incomeCheckVal:
         income = int(re.sub("k","",income,flags=re.IGNORECASE)) * 1000
 
-    elif "l" in income.replace(" ","").lower():
+
+    elif "l" in incomeCheckVal:
         income = int(re.sub("l","",income,flags=re.IGNORECASE)) * 100000
 
-    elif "cr" in income.replace(" ","").lower():
-        income = int(re.sub("cr","",income,flags=re.IGNORECASE)) * 10000000
 
 
-    if "," in expenses.replace(" ",""):
-        split_expenses_val = expenses.split(",")
-        expenses_substring = ""
-        for i in split_expenses_val:
-            expenses_substring += i
+    if "," in expensesCheckVal:
+        expenses = int(expenses.replace(",", ""))
 
-        expenses = int(expenses_substring)
 
-    elif "k" in expenses.replace(" ","").lower():
+
+    elif "k" in expensesCheckVal:
         expenses = int(re.sub("k","",expenses,flags=re.IGNORECASE)) * 1000
 
-    elif "l" in expenses.replace(" ","").lower():
+    elif "l" in expensesCheckVal:
         expenses = int(re.sub("l","",expenses,flags=re.IGNORECASE)) * 100000
-
-
-
 
     return income,expenses
 
-    
-def calcRemMoney(income,expenses):
+
+
+
+#calculating saving
+def saving(income,expenses):
     remMoney = income - expenses
     return remMoney
 
