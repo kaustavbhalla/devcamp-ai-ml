@@ -48,6 +48,9 @@ def take_input():
     elif "l" in incomeCheckVal:
         income = int(re.sub("l","",income,flags=re.IGNORECASE)) * 100000
 
+    else:
+        income = int(income)
+
 
 
     if "," in expensesCheckVal:
@@ -60,6 +63,9 @@ def take_input():
 
     elif "l" in expensesCheckVal:
         expenses = int(re.sub("l","",expenses,flags=re.IGNORECASE)) * 100000
+
+    else:
+        expenses = int(expenses)
 
     return income,expenses
 
